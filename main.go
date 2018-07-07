@@ -1,55 +1,59 @@
 package main
 
 import (
-	"bytes"
 	"errors"
+	"github.com/nlopes/slack"
 	"log"
-	"net/http"
 	"os"
-	"os/exec"
 	"strings"
+	"os/exec"
 )
 
 func getEnv() (string, error) {
-	if env := os.Getenv("WEBHOOK_URL"); env != "" {
+	if env := os.Getenv("SLACK_TOKEN"); env != "" {
 		return env, nil
 	} else {
-		return "", errors.New("WEBHOOK_URL not found")
+		return "", errors.New("SLACK_TOKEN is not found.")
 	}
 }
 
 func main() {
-	webhookURL, err := getEnv()
+	// fetch token from env variable
+	slackToken, err := getEnv()
 	if err != nil {
-		panic(err)
+		log.Println(err)
+		return
 	}
-	log.Println(webhookURL)
+	log.Println(slackToken)
 
+	// exec command
 	execCommand := strings.Join(os.Args[1:], " ")
-	log.Println(execCommand)
 	result, err := exec.Command("sh", "-c", execCommand).Output()
 	if err != nil {
-		panic(err)
+		log.Println(err)
+		return
 	}
-	log.Println(string(result))
 
-	postData := `{"text": "` + "```$ " + execCommand + "\n" + string(result) + "```" + `"}`
+	resultOfExecutedCommand := "```$ " + execCommand + "\n" + string(result) + "```"
 
-	req, err := http.NewRequest(
-		"POST",
-		webhookURL,
-		bytes.NewBuffer([]byte(postData)),
-	)
+	// post result of executed command to slack
+	api := slack.New(slackToken)
+	channels, err := api.GetChannels(false)
 	if err != nil {
-		panic(err)
+		log.Printf("%s\n", err)
+		return
 	}
+	for _, channel := range channels {
+		if channel.Name != "bots" {
+			continue
+		}
 
-	req.Header.Set("Content-Type", "application/json")
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		panic(err)
+		params := slack.PostMessageParameters{}
+		channelID, timestamp, err := api.PostMessage(channel.ID, resultOfExecutedCommand, params)
+		if err != nil {
+			log.Printf("%s\n", err)
+			return
+		}
+		log.Println(channelID, timestamp)
 	}
-	defer resp.Body.Close()
 }
