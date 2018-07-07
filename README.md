@@ -53,3 +53,7 @@ drwxr-xr-x   3 mituba  staff       96  7  8 00:26 vendor
 Posted message to slack
 
 ![ls](./screenshot/ls.png)
+
+## Dependencies
+
+- [nlopes/slack](https://github.com/nlopes/slack)
