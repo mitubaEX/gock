@@ -19,6 +19,7 @@ Please export your slack token as env variable.
 ```
 export SLACK_TOKEN=YOUR_SLACK_TOKEN
 ```
+Run
 
 ```
 gocrk <command>
@@ -41,3 +42,7 @@ drwxr-xr-x   8 mituba  staff      256  7  8 01:42 .idea
 -rw-r--r--   1 mituba  staff     1103  7  8 01:43 main.go
 drwxr-xr-x   3 mituba  staff       96  7  8 00:26 vendor
 ```
+
+Posted message to slack
+
+![ls](./screenshot/ls.png)
