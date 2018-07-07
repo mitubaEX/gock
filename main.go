@@ -2,13 +2,16 @@ package main
 
 import (
 	"errors"
+	"flag"
+	"fmt"
 	"github.com/nlopes/slack"
 	"log"
 	"os"
-	"strings"
 	"os/exec"
-	"fmt"
+	"strings"
 )
+
+var channelName = flag.String("c", "", "target channel name")
 
 func getEnv() (string, error) {
 	if env := os.Getenv("SLACK_TOKEN"); env != "" {
@@ -25,8 +28,10 @@ func main() {
 		log.Fatal(err)
 	}
 
+	flag.Parse()
+
 	// exec command
-	execCommand := strings.Join(os.Args[1:], " ")
+	execCommand := strings.Join(flag.Args(), " ")
 	result, err := exec.Command("sh", "-c", execCommand).Output()
 	if err != nil {
 		log.Fatal(err)
@@ -44,7 +49,7 @@ func main() {
 		log.Fatal(err)
 	}
 	for _, channel := range channels {
-		if channel.Name != "bots" {
+		if channel.Name != *channelName {
 			continue
 		}
 
