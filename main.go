@@ -14,7 +14,7 @@ func getEnv() (string, error) {
 	if env := os.Getenv("SLACK_TOKEN"); env != "" {
 		return env, nil
 	} else {
-		return "", errors.New("SLACK_TOKEN is not found.")
+		return "", errors.New("token is not found")
 	}
 }
 
@@ -41,7 +41,7 @@ func main() {
 	api := slack.New(slackToken)
 	channels, err := api.GetChannels(false)
 	if err != nil {
-		log.Fatal("%s\n", err)
+		log.Fatal(err)
 	}
 	for _, channel := range channels {
 		if channel.Name != "bots" {
@@ -51,7 +51,7 @@ func main() {
 		params := slack.PostMessageParameters{}
 		_, _, err := api.PostMessage(channel.ID, resultOfExecutedCommand, params)
 		if err != nil {
-			log.Fatal("%s\n", err)
+			log.Fatal(err)
 		}
 	}
 }
