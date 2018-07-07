@@ -6,6 +6,12 @@
 go get github.com/mitubaEX/gocrk
 ```
 
+## Required Slack permission
+
+- channels:read
+- chat:write:user
+- incoming-webhook
+
 ## Usage
 
 Please export your slack token as env variable.
