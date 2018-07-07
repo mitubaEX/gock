@@ -22,13 +22,20 @@ export SLACK_TOKEN=YOUR_SLACK_TOKEN
 Run
 
 ```
-gocrk <command>
+gocrk -c <channel name> <command>
+```
+
+## options
+
+```
+-c string
+      target channel name
 ```
 
 ## Example
 
 ```
-$ ./gocrk ls -la
+$ ./gocrk -c bots ls -la
 total 13392
 drwxr-xr-x  12 mituba  staff      384  7  8 01:45 .
 drwxr-xr-x   8 mituba  staff      256  7  1 20:30 ..
