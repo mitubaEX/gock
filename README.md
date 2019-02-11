@@ -19,10 +19,16 @@ Please export your slack token as env variable.
 ```
 export SLACK_TOKEN=YOUR_SLACK_TOKEN
 ```
-Run
+### Run
 
 ```
 gocrk -c <channel name> <command>
+```
+
+or input stdin.
+
+```
+<command> | gocrk -c <channel name>
 ```
 
 ## options
