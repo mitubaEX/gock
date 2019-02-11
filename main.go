@@ -4,11 +4,13 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"github.com/nlopes/slack"
+	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/nlopes/slack"
 )
 
 var channelName = flag.String("c", "", "target channel name")
@@ -30,11 +32,21 @@ func main() {
 
 	flag.Parse()
 
-	// exec command
-	execCommand := strings.Join(flag.Args(), " ")
-	result, err := exec.Command("sh", "-c", execCommand).Output()
-	if err != nil {
-		log.Fatal(err)
+	// change input source
+	var result []byte
+	var execCommand string
+	if flag.NArg() > 0 {
+		// exec command
+		execCommand = strings.Join(flag.Args(), " ")
+		result, err = exec.Command("sh", "-c", execCommand).Output()
+		if err != nil {
+			log.Fatal(err)
+		}
+	} else {
+		result, err = ioutil.ReadAll(os.Stdin)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	// print result
@@ -53,8 +65,7 @@ func main() {
 			continue
 		}
 
-		params := slack.PostMessageParameters{}
-		_, _, err := api.PostMessage(channel.ID, resultOfExecutedCommand, params)
+		_, _, err := api.PostMessage(channel.ID, slack.MsgOptionText(resultOfExecutedCommand, false))
 		if err != nil {
 			log.Fatal(err)
 		}
